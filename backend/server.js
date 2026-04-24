@@ -6,6 +6,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// OPTIONAL (for browser testing)
+app.get("/", (req, res) => {
+    res.send("BFHL API is running");
+});
+
 app.post("/bfhl", (req, res) => {
     try {
         const input = req.body.data || [];
@@ -117,7 +122,10 @@ app.post("/bfhl", (req, res) => {
                 let depth = getDepth(node);
                 total_trees++;
 
-                if (depth > maxDepth || (depth === maxDepth && node < largest_tree_root)) {
+                if (
+                    depth > maxDepth ||
+                    (depth === maxDepth && (largest_tree_root === "" || node < largest_tree_root))
+                ) {
                     maxDepth = depth;
                     largest_tree_root = node;
                 }
@@ -150,6 +158,9 @@ app.post("/bfhl", (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log("Server running on port 3000");
+// IMPORTANT FOR RENDER
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
